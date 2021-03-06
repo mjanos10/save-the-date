@@ -1,0 +1,18 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.associations": {
+      "**/frontend/src/App.js": "javascriptreact",
+      "**/frontend/src/components/*.js": "javascriptreact",
+      "**/frontend/src/views/*.js": "javascriptreact"
+    },
+    "editor.formatOnSave": true,
+    "cSpell.words": [
+      "airtable"
+    ]
+  }
+}

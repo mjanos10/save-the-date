@@ -1,0 +1,10 @@
+.form {
+}
+
+.form-field {
+  margin-bottom: 1em;
+}
+
+.form-field label {
+  display: block;
+}

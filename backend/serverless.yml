@@ -1,0 +1,10 @@
+app: express-starter
+component: express
+name: express-starter
+
+inputs:
+  src: ./
+  env:
+    AIRTABLE_API_KEY: ${param:AIRTABLE_API_KEY}
+    AIRTABLE_BASE: ${param:AIRTABLE_BASE}
+  region: 'eu-central-1'
