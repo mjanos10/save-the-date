@@ -5,7 +5,12 @@ export default function Hero() {
   return (
     <div className="hero">
       <div className="hero__img">
-        <img src={img} alt="" width="900" height="450" />
+        <img
+          src={img}
+          alt="A jegyesfotózáson készült ez a kép még az ősz folyamán. Épp fekszünk a földön egymást átölelve, miközben a levelek hullanak ránk."
+          width="900"
+          height="450"
+        />
       </div>
     </div>
   );

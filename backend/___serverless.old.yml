@@ -1,0 +1,13 @@
+component: express
+org: janosmayer
+app: save-the-date
+name: api
+stage: dev
+
+inputs:
+  src: ./
+  env:
+    AIRTABLE_API_KEY: ${param:AIRTABLE_API_KEY}
+    AIRTABLE_BASE: ${param:AIRTABLE_BASE}
+    AIRTABLE_TABLE_NAME: ${param:AIRTABLE_TABLE_NAME}
+  region: 'eu-central-1'

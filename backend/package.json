@@ -11,12 +11,15 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "serverless": "^2.29.0"
+    "aws-sdk": "^2.864.0",
+    "serverless": "^2.29.0",
+    "serverless-offline": "^6.8.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "serverless dev",
-    "deploy:dev": "serverless deploy",
+    "dev": "serverless offline",
+    "sls": "serverless",
+    "deploy:dev": "serverless deploy --stage dev",
     "deploy:prod": "serverless deploy --stage prod",
     "remove": "serverless remove"
   },

@@ -1,13 +1,77 @@
-component: express
-org: janosmayer
-app: save-the-date
-name: api
-stage: dev
+service: save-the-date
 
-inputs:
-  src: ./
-  env:
-    AIRTABLE_API_KEY: ${param:AIRTABLE_API_KEY}
-    AIRTABLE_BASE: ${param:AIRTABLE_BASE}
-    AIRTABLE_TABLE_NAME: ${param:AIRTABLE_TABLE_NAME}
-  region: 'eu-central-1'
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: eu-central-1
+  profile: mjanos10
+  lambdaHashingVersion: "20201221"
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - 'SNS:Publish'
+          Resource:
+            Fn::Join:
+              - ':'
+              - - 'arn:aws:sns'
+                - Ref: 'AWS::Region'
+                - Ref: 'AWS::AccountId'
+                - 'SaveTheDateSubmitted'
+  environment:
+    AIRTABLE_TABLE_NAME: ${self:custom.tableName.${self:custom.stage}}
+    AIRTABLE_API_KEY: ${self:custom.secrets.airtable.AIRTABLE_API_KEY}
+    AIRTABLE_BASE: ${self:custom.secrets.airtable.AIRTABLE_BASE}
+    SAVE_THE_DATE_SUBMITTED_TOPIC_ARN:
+      Fn::Join:
+        - ':'
+        - - 'arn:aws:sns'
+          - Ref: 'AWS::Region'
+          - Ref: 'AWS::AccountId'
+          - 'SaveTheDateSubmitted'
+
+functions:
+  getOneRecord:
+    handler: src/functions/handler.getOneRecord
+    events:
+      - httpApi:
+          method: GET
+          path: /record/{recordId}
+
+  updateOneRecord:
+    handler: src/functions/handler.updateOneRecord
+    events:
+      - httpApi:
+          method: PATCH
+          path: /record/{recordId}
+
+resources:
+  Resources:
+    SaveTheDateSubmitted:
+      Type: 'AWS::SNS::Topic'
+      Properties:
+        DisplayName: Triggered when the form is submitted
+        TopicName: saveTheDateSubmitted-${self:custom.stage}
+    SaveTheDateSubmittedSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn: 
+          Ref: "SaveTheDateSubmitted"
+        Protocol: email-json
+        Endpoint: mayer.muzsai@gmail.com
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  region: ${opt:region, self:provider.region}
+  tableName:
+    dev: Table-dev
+    prod: Table
+  secrets:
+    airtable: ${ssm:/aws/reference/secretsmanager/${self:custom.stage}/saveTheDate/airtable~true}
+  serverless-offline:
+    httpPort: 4000
+
+plugins:
+  - serverless-offline
