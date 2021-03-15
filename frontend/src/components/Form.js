@@ -1,168 +1,291 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import './Form.css';
 
 import FormField from './FormField';
-import Select from './Select';
 
-const plusOneOptions = [
-  ['not-sure', 'Még nem tudom'],
-  ['yes', 'Igen szeretnék'],
-  ['no', 'Nem fogok'],
+/**
+ * @param {boolean} isPlural
+ * @returns string
+ */
+const getUnsetSelectLabel = (isPlural) => {
+  return `-- Kérjük válassz${isPlural ? 'atok' : ''} --`;
+};
+
+const getPlusOneOptions = (isPlural) => [
+  ['', getUnsetSelectLabel(isPlural)],
+  ['not-sure', isPlural ? 'Még nem tudjuk' : 'Még nem tudom'],
+  ['yes', isPlural ? 'Igen, szeretnénk' : 'Igen, szeretnék'],
+  ['no', isPlural ? 'Nem fogunk' : 'Nem fogok'],
 ];
 
-export default function Form({
-  canBringPlusOne,
-  isPlural,
-  askChildren,
-  multipleChildren,
-}) {
-  const [isComing, setIsComing] = useState('');
-  const [plusOne, setPlusOne] = useState('no');
-  const [hasAllergy, setHasAllergy] = useState('no');
-  const [allergyDesc, setAllergyDesc] = useState('');
-  const [children, setChildren] = useState(0);
-  const [message, setMessage] = useState('');
+const getYesNoOptions = (isPlural, yes = 'Igen', no = 'Nem') => [
+  ['', getUnsetSelectLabel(isPlural)],
+  ['yes', yes],
+  ['no', no],
+];
 
-  function renderIsComing() {
-    const label = `${isPlural ? 'Tudtok' : 'Tudsz'} jönni az esküvőre?`;
-    return (
-      <FormField fieldId="is-coming" label={label}>
-        <Select
-          id="is-coming"
-          value={isComing}
-          onChange={(e) => setIsComing(e.target.value)}
-          options={[
-            ['', '-- Kérlek válassz --'],
-            ['yes', 'Igen'],
-            ['no', 'Sajnos nem'],
-          ]}
-        />
-      </FormField>
-    );
+const getBringingChildrenLabel = (isPlural, multipleChildren) => {
+  const start = isPlural ? 'Szeretnétek' : 'Szeretnéd';
+  let end;
+  if (isPlural) {
+    end = multipleChildren ? 'gyerekeiteket' : 'gyereketeket';
+  } else {
+    end = multipleChildren ? 'gyerekeidet' : 'gyerekedet';
   }
+  return `${start} hozni a ${end}?`;
+};
 
-  function renderPlusOne() {
-    if (!canBringPlusOne || isComing !== 'yes') {
-      return null;
-    }
-    return (
-      <FormField fieldId="plus-one" label="Szeretnél hozni +1 főt?">
-        <Select
-          id="plus-one"
-          value={plusOne}
-          onChange={(e) => setPlusOne(e.target.value)}
-          options={plusOneOptions}
-        />
-      </FormField>
-    );
+const getChildrenDescLabel = (isPlural, multipleChildren) => {
+  if (isPlural && multipleChildren) {
+    return 'Hány évesek gyerekeitek vannak?';
   }
-
-  function renderMessage() {
-    if (isComing === '') {
-      return null;
-    }
-
-    return (
-      <FormField fieldId="message" label="Ide jöhet bármilyen további infó">
-        <textarea
-          id="message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-      </FormField>
-    );
+  if (isPlural && !multipleChildren) {
+    return 'Hány éves gyereketek van?';
   }
-
-  function renderHasAllergy() {
-    if (isComing !== 'yes') {
-      return null;
-    }
-
-    return (
-      <FormField
-        fieldId="has-allergy"
-        label={
-          isPlural
-            ? 'Van valamelyikőtöknek étel allergiája?'
-            : 'Van étel allergiád?'
-        }
-      >
-        <Select
-          id="has-allergy"
-          value={hasAllergy}
-          onChange={(e) => setHasAllergy(e.target.value)}
-          options={[
-            ['no', 'Nincs'],
-            ['yes', 'Van'],
-          ]}
-        />
-      </FormField>
-    );
+  if (multipleChildren) {
+    return 'Hány éves gyerekeid vannak?';
   }
+  return 'Hány éves gyereked van?';
+};
 
-  function renderAllergyDesc() {
-    if (isComing !== 'yes' || hasAllergy === 'no') {
-      return null;
-    }
+/**
+ * @param {Object} props
+ * @param {import('../types').PageData} props.pageData
+ */
+export default function Form({ pageData }) {
+  const {
+    canBringPlusOne,
+    peopleCount,
+    askChildren,
+    multipleChildren,
+  } = pageData;
 
-    return (
-      <FormField
-        fieldId="allergy-description"
-        label={isPlural ? `Mire vagytok allergiásak?` : 'Mire vagy allergiás?'}
-      >
-        <textarea
-          id="allergy-description"
-          value={allergyDesc}
-          onChange={(e) => setAllergyDesc(e.target.value)}
-        />
-      </FormField>
-    );
-  }
+  const isPlural = peopleCount > 1;
 
-  function renderChildren() {
-    if (isComing !== 'yes' || !askChildren) {
-      return null;
+  const { register, handleSubmit, errors, watch } = useForm({
+    defaultValues: {
+      isComing: pageData.isComing,
+      message: pageData.message,
+      plusOne: pageData.plusOne,
+      requiresAccommodation: pageData.requiresAccommodation,
+      hasAllergy: pageData.hasAllergy,
+      allergyDesc: pageData.allergyDesc,
+      bringingChildren: pageData.bringingChildren,
+      childrenDesc: pageData.childrenDesc,
+    },
+  });
+
+  const { isComing, hasAllergy, bringingChildren } = watch();
+
+  console.log('rerender', isComing, hasAllergy);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const labels = {
+    isComing: {
+      label: `${isPlural ? 'Tudtok' : 'Tudsz'} jönni az esküvőre?`,
+      yes: `Igen, ${isPlural ? 'tudunk' : 'tudok'} jönni!`,
+      no: `Sajnos nem ${isPlural ? 'tudunk' : 'tudok'} jönni :(`,
+    },
+    plusOne: {
+      label: `${isPlural ? `Szeretnétek` : 'Szeretnél'} hozni +1 főt?`,
+    },
+    requiresAccommodation: {
+      label: isPlural ? 'Igényeltek szállást?' : 'Igényelsz szállást?',
+      yes: 'Igen',
+      no: 'Nem',
+    },
+    bringingChildren: {
+      label: getBringingChildrenLabel(isPlural, multipleChildren),
+      yes: 'Igen',
+      no: 'Nem',
+    },
+    childrenDesc: {
+      label: getChildrenDescLabel(isPlural, multipleChildren),
+    },
+    hasAllergy: {
+      label: isPlural
+        ? 'Van valamelyikőtöknek étel allergiája?'
+        : 'Van étel allergiád?',
+      yes: 'Van',
+      no: 'Nincs',
+    },
+    allergyDesc: {
+      label: isPlural ? `Mire vagytok allergiásak?` : 'Mire vagy allergiás?',
+    },
+    message: {
+      label: 'Bármilyen egyéb megjegyzés',
+    },
+  };
+
+  async function onSubmit(e) {
+    console.log(e);
+    setIsSubmitting(true);
+
+    try {
+      console.log('Submitted');
+    } catch (error) {
+      console.error('Error while submitting', error);
     }
 
-    const start = isPlural ? 'Szeretnétek' : 'Szeretnéd';
-    let end;
-    if (isPlural) {
-      end = multipleChildren ? 'gyerekeiteket' : 'gyereketeket';
-    } else {
-      end = multipleChildren ? 'gyerekeidet' : 'gyerekedet';
-    }
-    const ageQ = `Ha igen, akkor hány éves${multipleChildren ? 'ek' : ''}?`;
-    const label = `${start} hozni a ${end}? ${ageQ}`;
-
-    return (
-      <FormField fieldId="children" label={label}>
-        <textarea
-          id="children"
-          value={children}
-          onChange={(e) => setChildren(e.target.value)}
-        />
-      </FormField>
-    );
+    setIsSubmitting(false);
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    console.log('Submitted');
+  let formContentClasses = 'form__content';
+  if (isSubmitting) {
+    formContentClasses += ' form__content--isSubmitting';
   }
 
   return (
-    <form onSubmit={handleSubmit} className="form">
-      <div className="form__content">
-        {renderIsComing()}
-        {renderPlusOne()}
-        {renderChildren()}
-        {renderHasAllergy()}
-        {renderAllergyDesc()}
-        {renderMessage()}
+    <form onSubmit={handleSubmit(onSubmit)} className="form">
+      <div className={formContentClasses}>
+        <FormField fieldId="is-coming" label={labels.isComing.label}>
+          <select
+            id="is-coming"
+            name="isComing"
+            ref={register({ required: true })}
+          >
+            {getYesNoOptions(
+              isPlural,
+              labels.isComing.yes,
+              labels.isComing.no
+            ).map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </FormField>
+
+        {canBringPlusOne && isComing === 'yes' && (
+          <FormField fieldId="plus-one" label={labels.plusOne.label}>
+            <select
+              id="plus-one"
+              name="plusOne"
+              ref={register({ required: true })}
+            >
+              {getPlusOneOptions(isPlural).map(([key, label]) => (
+                <option key={label} value={key}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </FormField>
+        )}
+
+        {isComing === 'yes' && (
+          <FormField
+            fieldId="requires-accommodation"
+            label={labels.requiresAccommodation.label}
+          >
+            <select
+              id="requires-accommodation"
+              name="requiresAccommodation"
+              ref={register({ required: true })}
+            >
+              {getYesNoOptions(
+                isPlural,
+                labels.requiresAccommodation.yes,
+                labels.requiresAccommodation.no
+              ).map(([key, label]) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </FormField>
+        )}
+
+        {askChildren && isComing === 'yes' && (
+          <FormField
+            fieldId="bringing-children"
+            label={labels.bringingChildren.label}
+          >
+            <select
+              id="bringing-children"
+              name="bringingChildren"
+              ref={register({ required: true })}
+            >
+              {getYesNoOptions(
+                isPlural,
+                labels.bringingChildren.yes,
+                labels.bringingChildren.no
+              ).map(([key, label]) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </FormField>
+        )}
+
+        {askChildren && isComing === 'yes' && bringingChildren === 'yes' && (
+          <FormField
+            fieldId="children-description"
+            label={labels.childrenDesc.label}
+          >
+            <textarea
+              id="children-description"
+              name="childrenDesc"
+              ref={register({ required: true })}
+            />
+          </FormField>
+        )}
+
+        {isComing === 'yes' && (
+          <FormField fieldId="has-allergy" label={labels.hasAllergy.label}>
+            <select
+              id="has-allergy"
+              name="hasAllergy"
+              ref={register({ required: true })}
+            >
+              {getYesNoOptions(
+                isPlural,
+                labels.hasAllergy.yes,
+                labels.hasAllergy.no
+              ).map(([key, label]) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </FormField>
+        )}
+
+        {isComing === 'yes' && hasAllergy === 'yes' && (
+          <FormField
+            fieldId="allergy-description"
+            label={labels.allergyDesc.label}
+          >
+            <textarea
+              id="allergy-description"
+              name="allergyDesc"
+              ref={register({ required: true })}
+            />
+          </FormField>
+        )}
+
+        {isComing !== '' && (
+          <FormField
+            fieldId="message"
+            label={labels.message.label}
+            error={errors.message}
+          >
+            <textarea
+              id="message"
+              name="message"
+              ref={register({ required: true })}
+            />
+          </FormField>
+        )}
         <div className="formField">
-          <button className="btn" type="submit">
+          <button className="btn btn--primary" type="submit">
             Küldés
           </button>
+        </div>
+        <div className="form__loading" onClick={() => setIsSubmitting(false)}>
+          Egy pillanat...
         </div>
       </div>
     </form>

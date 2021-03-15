@@ -57,12 +57,7 @@ export default function Home() {
           <Hero />
           <Info />
           <Intro people={pageData.people} peopleCount={pageData.peopleCount} />
-          <Form
-            canBringPlusOne={pageData.canBringPlusOne}
-            isPlural={pageData.peopleCount > 1}
-            askChildren={pageData.askChildren}
-            multipleChildren={pageData.multipleChildren}
-          />
+          <Form pageData={pageData} />
           <Gallery />
           <Footer />
         </div>

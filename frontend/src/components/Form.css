@@ -4,7 +4,8 @@
 
 .form {
   position: relative;
-  padding: 0 20px 5em;
+  padding: 0 20px;
+  margin-bottom: 5em;
   /* background-color: var(--form-bg-color); */
   background-size: cover;
   /* background-image: url(../images/DSC00838.jpg); */
@@ -14,27 +15,30 @@
   --border-color: rgba(var(--font-color-rgb), 0.2);
 }
 
-/* .form::before {
-  content: '';
-  background-color: rgba(0, 0, 0, 0.3);
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  filter: blur(1px);
-} */
-
 .form__content {
   position: relative;
   z-index: 2;
   max-width: 400px;
   margin: 0 auto;
-  /* padding: 50px; */
+  padding-bottom: 5px;
+}
 
-  /* background-color: rgba(0, 0, 0, 0.5); */
-  /* text-align: center; */
+.form__loading {
+  display: none;
+}
+
+.form__content--isSubmitting .form__loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  height: 100%;
+  z-index: 3;
+  background-color: rgba(250, 250, 250, 0.8);
 }
 
 .form-field {
@@ -43,7 +47,6 @@
 
 .form-field label {
   display: block;
-  font-size: 1.1em;
   margin-bottom: 0.3em;
 }
 
@@ -66,13 +69,22 @@
   /* color: var(--form-bg-color); */
 }
 
-.form button {
+.btn {
   display: block;
   padding: 0.5em 1em;
   margin: 0 auto;
   border: none;
   font-size: 1.2em;
+  border-radius: 3px;
+}
+
+.btn--primary {
   color: var(--bg-color);
   background-color: var(--secondary-color);
-  border-radius: 3px;
+}
+
+.btn--secondary {
+  color: var(--font-color);
+  background-color: var(--bg-color);
+  border: 1px solid;
 }

@@ -16,7 +16,12 @@ export function makeServer({ environment = 'test' } = {}) {
         canBringPlusOne: false,
         askChildren: true,
         multipleChildren: false,
-        children: undefined,
+        plusOne: false,
+        requiresAccommodation: '',
+        hasAllergy: '',
+        allergyDesc: '',
+        children: '',
+        message: '',
       });
       server.create('record', { id: '2', name: 'Alice' });
     },

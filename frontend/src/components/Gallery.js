@@ -12,15 +12,16 @@ export default function Gallery() {
     'DSC01489',
     'DSC02031',
   ].map((name) => ({
+    name,
     thumb: `${process.env.PUBLIC_URL}/img/${name}.jpg`,
     full: `${process.env.PUBLIC_URL}/img/${name}--thumb.jpg`,
   }));
 
   return (
     <SRLWrapper>
-      <div class="gallery">
+      <div className="gallery">
         {images.map((i) => (
-          <div class="gallery__elem">
+          <div className="gallery__elem" key={i.name}>
             <a href={i.thumb}>
               <img src={i.full} alt="" />
             </a>

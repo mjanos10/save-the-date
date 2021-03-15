@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header__img">
-        <img src={img} alt="Szívecskés kép" />
+        <img src={img} alt="" />
       </div>
       <h1 className="header__title">Evelin & János</h1>
       <p className="header__details">2021. 09. 03</p>

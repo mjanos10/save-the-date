@@ -12,7 +12,8 @@
     },
     "editor.formatOnSave": true,
     "cSpell.words": [
-      "airtable"
+      "airtable",
+      "lightbox"
     ]
   }
 }

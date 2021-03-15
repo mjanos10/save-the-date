@@ -1,0 +1,13 @@
+.form-field {
+  margin-bottom: 1em;
+}
+
+.form-field__label {
+  display: block;
+  margin-bottom: 0.3em;
+}
+
+.form-field__error {
+  margin-top: 0.5em;
+  color: #ff2c46;
+}
