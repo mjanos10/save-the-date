@@ -7,14 +7,18 @@
     "airtable": "^0.10.1",
     "express": "^4.17.1",
     "joi": "^17.4.0",
-    "lambda-log": "^2.4.0"
+    "lambda-log": "^2.4.0",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "serverless": "^2.29.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "serverless dev"
+    "dev": "serverless dev",
+    "deploy:dev": "serverless deploy",
+    "deploy:prod": "serverless deploy --stage prod",
+    "remove": "serverless remove"
   },
   "author": "",
   "license": "ISC"

@@ -2,9 +2,12 @@
 
 // eslint-disable-next-line import/no-unresolved
 const express = require("express");
+const morgan = require("morgan");
 const controller = require("./src/controllers");
 
 const app = express();
+
+app.use(morgan("combined"));
 
 app.use(express.json());
 

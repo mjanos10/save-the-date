@@ -16,7 +16,7 @@ const client = new Airtable({
  */
 exports.getRecord = async function getRecord(id) {
   logger.info("sending_airtable_get_record_query", { id });
-  const record = await client("DataTable").find(id);
+  const record = await client(process.env.AIRTABLE_TABLE_NAME).find(id);
   logger.info("airtable_get_record_query_response", { id, record });
   return record.fields;
 };
