@@ -9,7 +9,7 @@ export default function LoadError({ error }) {
       : 'Unknown';
 
   return (
-    <div class="load-error">
+    <div className="load-error">
       {errorType === 'NotFound'
         ? 'Hmm, ezzel az azonosítóval nem találtuk meg az adataidat. Biztos jó linket használtál?'
         : 'Ehh, hiba történt. Próbáld meg légyszi újra!'}
