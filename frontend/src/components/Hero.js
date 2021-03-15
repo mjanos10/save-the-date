@@ -1,5 +1,5 @@
 import './Hero.css';
-import img from '../images/DSC01767.jpg';
+import img from '../images/DSC01767-1800.jpg';
 
 export default function Hero() {
   return (

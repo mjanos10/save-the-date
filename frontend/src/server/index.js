@@ -27,7 +27,7 @@ export function makeServer({ environment = 'test' } = {}) {
     },
 
     routes() {
-      // this.namespace = 'api';
+      this.urlPrefix = process.env.REACT_APP_BACKEND_URL;
 
       this.get('/record/:recordId', (schema, request) => {
         const record = schema.findBy('record', { id: request.params.recordId });
