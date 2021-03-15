@@ -5,6 +5,8 @@
 const Airtable = require("airtable");
 const logger = require("../infra/logger");
 
+const tableName = process.env.AIRTABLE_TABLE_NAME;
+
 let client;
 
 function getClient() {
@@ -23,7 +25,7 @@ function getClient() {
  */
 exports.getRecord = async function getRecord(id) {
   logger.info("sending_airtable_get_record_query", { id });
-  const record = await getClient()(process.env.AIRTABLE_TABLE_NAME).find(id);
+  const record = await getClient()(tableName).find(id);
   logger.info("airtable_get_record_query_response", { id, record });
   return record.fields;
 };
@@ -35,7 +37,7 @@ exports.getRecord = async function getRecord(id) {
  */
 exports.updateRecord = async function updateRecord(id, data) {
   logger.info("sending_airtable_update_record_request", { id, data });
-  const record = await getClient()("DataTable").update(id, data);
+  const record = await getClient()(tableName).update(id, data);
   logger.info("airtable_record_update_response_arrived", { id, data, record });
   return record.fields;
 };
