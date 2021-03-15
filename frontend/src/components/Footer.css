@@ -1,0 +1,21 @@
+.footer {
+  margin: 0 auto;
+  width: fit-content;
+  text-align: center;
+
+  --padding-between: 1rem;
+}
+
+.footer__short {
+  font-size: 3em;
+  line-height: 1;
+  font-family: 'Josefin Slab', cursive;
+  border-bottom: 1px solid;
+  padding: 0 1em var(--padding-between);
+  /* padding-bottom: 1.5rem; */
+}
+
+.footer__date {
+  padding-top: var(--padding-between);
+
+}

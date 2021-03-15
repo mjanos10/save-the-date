@@ -1,0 +1,36 @@
+.header {
+  padding: 0 1em 2em;
+  text-align: center;
+  font-family: 'Josefin Slab', cursive;
+}
+
+.header__img {
+  max-height: 120px;
+  max-width: 100%;
+  width: 100px;
+  margin: 0 auto;
+}
+
+.header__title {
+  font-weight: 400;
+  font-size: 2.5em;
+  color: var(--font-color);
+  margin: 0;
+}
+
+.header p {
+  margin: 0;
+}
+
+@media screen and (min-width: 900px) {
+  .header__img {
+    width: 160px;
+  }
+
+  .header__title {
+    font-size: 4em;
+  }
+  .header p {
+    font-size: 20px;
+  }
+}

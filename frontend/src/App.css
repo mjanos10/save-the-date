@@ -1,37 +1,45 @@
-.App {
-  text-align: center;
+:root {
+  /*
+    This will enable using this variable as rgba(var(--font-color-rgb), 0.2)
+    to apply an alpha to it 
+  */
+  --font-color-rgb: 73, 73, 93;
+  --font-color: rgb(var(--font-color-rgb));
+  --secondary-color: #8d3850;
+  --bg-color: #fafafa;
 }
 
-label {
-  display: block;
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+html,
+body {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+body {
+  padding: 2em 1em;
+  background-color: var(--bg-color);
+  font-family: 'Roboto', 'sans-serif';
+  color: var(--font-color);
 }
 
-.App-link {
-  color: #61dafb;
+#root {
+  /* width: 800px; */
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+img {
+  max-width: 100%;
+}
+
+@media screen and (min-width: 900px) {
+  body {
+    padding-top: 5em;
+    padding-bottom: 5em;
   }
 }

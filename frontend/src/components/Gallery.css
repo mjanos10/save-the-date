@@ -1,0 +1,27 @@
+.gallery {
+  display: grid;
+  gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
+  padding: 0 2em;
+  margin-bottom: 3em;
+}
+
+.gallery__elem {
+  width: 100%;
+  margin: 0;
+}
+
+.gallery img {
+  display: block;
+}
+
+
+@media screen and (min-width: 900px) {
+  .gallery {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* .gallery__elem {
+
+} */

@@ -1,0 +1,16 @@
+.save-the-date {
+  font-family: 'Great Vibes';
+
+  text-align: center;
+}
+
+.save-the-date__title {
+  font-size: 5em;
+  margin: 0;
+  font-weight: 400;
+}
+
+.save-the-date__date {
+  font-size: 2em;
+  margin: 0;
+}

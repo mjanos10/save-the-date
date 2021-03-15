@@ -16,9 +16,7 @@ app.use(function (req, res, next) {
 
 app.disable("x-powered-by");
 
-// Routes
-
-app.get("/:recordId", async (req, res) => {
+app.get("/record/:recordId", async (req, res) => {
   const { success, data, error } = await airtable.getRecord(
     req.params.recordId
   );

@@ -152,16 +152,18 @@ export default function Form({
 
   return (
     <form onSubmit={handleSubmit} className="form">
-      {renderIsComing()}
-      {renderPlusOne()}
-      {renderChildren()}
-      {renderHasAllergy()}
-      {renderAllergyDesc()}
-      {renderMessage()}
-      <div className="formField">
-        <button className="btn" type="submit">
-          Küldés
-        </button>
+      <div className="form__content">
+        {renderIsComing()}
+        {renderPlusOne()}
+        {renderChildren()}
+        {renderHasAllergy()}
+        {renderAllergyDesc()}
+        {renderMessage()}
+        <div className="formField">
+          <button className="btn" type="submit">
+            Küldés
+          </button>
+        </div>
       </div>
     </form>
   );

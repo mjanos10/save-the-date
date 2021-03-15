@@ -8,7 +8,9 @@
     "express": "^4.17.1",
     "lambda-log": "^2.4.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "serverless": "^2.29.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "serverless dev"
