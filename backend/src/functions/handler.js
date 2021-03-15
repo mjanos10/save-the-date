@@ -15,34 +15,36 @@ const {
 const { validateUpdateBody } = require("../validators/update-validator");
 
 exports.getOneRecord = async (evt, ctx) => {
+  const { awsRequestId } = ctx;
   const { recordId } = evt.pathParameters;
+
   try {
     logger.info("new_event", {
       evt,
-      awsMessageId: ctx.awsMessageId,
+      awsRequestId,
       recordId: evt.pathParameters.recordId,
     });
 
     const airtableRecord = await airtable.getRecord(recordId);
     const sharedRecord = airtableToSharedRecord(airtableRecord);
     logger.info("successfully_transformed_record", { recordId, sharedRecord });
-    return successResponse(sharedRecord);
+    return successResponse(sharedRecord, awsRequestId);
   } catch (error) {
-    console.error(error);
     logger.error("failed_to_get_one_record", error);
     if (error && error.error === "NOT_FOUND") {
-      return errorResponse(404, "Not Found", error);
+      return errorResponse(404, "Not Found", error, awsRequestId);
     }
-    return errorResponse(500, "Unknown error", error);
+    return errorResponse(500, "Unknown error", error, awsRequestId);
   }
 };
 
 exports.updateOneRecord = async (evt, ctx) => {
+  const { awsRequestId } = ctx;
   const { recordId } = evt.pathParameters;
   try {
     logger.info("new_update_event", {
       evt,
-      awsMessageId: ctx.awsMessageId,
+      awsRequestId,
       recordId: evt.pathParameters.recordId,
     });
 
@@ -55,7 +57,10 @@ exports.updateOneRecord = async (evt, ctx) => {
       sharedRecord,
     });
 
-    const validatedBody = validateUpdateBody(evt.body, sharedRecord);
+    const validatedBody = validateUpdateBody(
+      JSON.parse(evt.body),
+      sharedRecord
+    );
 
     logger.info("update_request_body_is_valid", {
       recordId,
@@ -79,30 +84,38 @@ exports.updateOneRecord = async (evt, ctx) => {
 
     await notification.emitEvent(recordId, foundRecord["Ismertető"]);
 
-    return successResponse(sharedRecord);
+    return successResponse(sharedRecord, awsRequestId);
   } catch (error) {
     logger.error("failed_to_update_one_record", { recordId, error });
     if (error && Joi.isError(error)) {
-      return errorResponse(400, "Bad Request", error);
+      return errorResponse(400, "Bad Request", error, awsRequestId);
     }
     if (error && error.error === "NOT_FOUND") {
-      return errorResponse(404, "Not Found", error);
+      return errorResponse(404, "Not Found", error, awsRequestId);
     }
-    return errorResponse(500, "Unknown error", error);
+    return errorResponse(500, "Unknown error", error, awsRequestId);
   }
 };
 
-function successResponse(body) {
+function successResponse(body, messageId) {
   return {
     statusCode: 200,
     body: JSON.stringify(body),
+    headers: {
+      "Content-type": "application/json",
+      "x-message-id": messageId,
+    },
   };
 }
 
-function errorResponse(status, message, body) {
+function errorResponse(status, message, body, messageId) {
   return {
     statusCode: status,
     message,
+    headers: {
+      "Content-type": "application/json",
+      "x-message-id": messageId,
+    },
     body: JSON.stringify(body),
   };
 }
