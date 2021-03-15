@@ -12,8 +12,8 @@ export default function Gallery() {
     'DSC02031',
   ].map((name) => ({
     name,
-    thumb: `${process.env.PUBLIC_URL}/img/${name}.jpg`,
-    full: `${process.env.PUBLIC_URL}/img/${name}--thumb.jpg`,
+    thumb: `${process.env.PUBLIC_URL}/img/${name}--thumb.jpg`,
+    full: `${process.env.PUBLIC_URL}/img/${name}--1920.jpg`,
   }));
 
   const options = {
@@ -29,8 +29,8 @@ export default function Gallery() {
       <div className="gallery">
         {images.map((i) => (
           <div className="gallery__elem" key={i.name}>
-            <a href={i.thumb}>
-              <img src={i.full} alt="" />
+            <a href={i.full}>
+              <img src={i.thumb} alt="" />
             </a>
           </div>
         ))}
