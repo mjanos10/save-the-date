@@ -12,21 +12,14 @@ export default function Intro({ people, peopleCount }) {
 
   const isPlural = peopleCount > 1;
 
-  const text1 =
-    peopleCount > 1
-      ? `Szeretettel meghívunk ${
-          isPlural ? 'Titeket' : 'Téged'
-        } a 2021. 09. 03-án tartandó esküvőnkre a lajosmizsei Ezüst Villa Rendezvényházba!`
-      : ``;
-  const text2 =
-    peopleCount > 1
-      ? `Hogy a jelenleginél kicsit felkészültebbek lehessünk, kérünk ${
-          isPlural ? 'válaszoljatok' : 'válaszolj'
-        } nekünk az alábbi kérdésekre, ezzel is növelve az esélyét, hogy vacsorához ${
-          isPlural ? 'juthassatok' : 'juthass'
-        }.`
-      : ``;
-
+  const text1 = `Szeretettel meghívunk ${
+    isPlural ? 'Titeket' : 'Téged'
+  } a 2021. 09. 03-án tartandó esküvőnkre a lajosmizsei Ezüst Villa Rendezvényházba!`;
+  const text2 = `Hogy a jelenleginél kicsit felkészültebbek lehessünk, kérünk ${
+    isPlural ? 'válaszoljatok' : 'válaszolj'
+  } nekünk az alábbi kérdésekre, ezzel is növelve az esélyét, hogy vacsorához ${
+    isPlural ? 'juthassatok' : 'juthass'
+  }.`;
   return (
     <div className="intro">
       <div className="intro__text">

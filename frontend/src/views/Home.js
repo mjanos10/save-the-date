@@ -9,11 +9,15 @@ import Info from '../components/Info';
 import Form from '../components/Form';
 import Footer from '../components/Footer';
 import Gallery from '../components/Gallery';
+import LoadError from '../components/LoadError';
 
 import * as api from '../services/api';
 
 export default function Home() {
+  const { recordId } = useParams();
+
   const [pageData, setPageData] = useState({
+    id: recordId,
     isLoading: true,
     loadError: null,
     canBringPlusOne: false,
@@ -21,11 +25,7 @@ export default function Home() {
     people: [],
     peopleCount: 1,
     multipleChildren: false,
-    submitLoading: false,
-    submitError: false,
   });
-
-  const { recordId } = useParams();
 
   useEffect(() => {
     async function fetchData() {
@@ -33,12 +33,14 @@ export default function Home() {
       if (success) {
         setPageData({
           ...data,
+          id: recordId,
           isLoading: false,
           loadError: null,
         });
       } else {
         setPageData({
           ...data,
+          id: recordId,
           isLoading: false,
           loadError: error,
         });
@@ -49,9 +51,11 @@ export default function Home() {
 
   return (
     <>
-      {pageData.isLoading ? (
-        <Loading />
-      ) : (
+      {pageData.isLoading && <Loading />}
+      {pageData.isLoading === false && pageData.loadError && (
+        <LoadError error={pageData.loadError} />
+      )}
+      {pageData.isLoading === false && !pageData.loadError && (
         <div className="home">
           <Header />
           <Hero />

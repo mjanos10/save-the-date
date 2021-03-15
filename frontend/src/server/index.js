@@ -18,8 +18,8 @@ export function makeServer({ environment = 'test' } = {}) {
         multipleChildren: false,
         plusOne: false,
         requiresAccommodation: '',
-        hasAllergy: '',
-        allergyDesc: '',
+        hasSpecialDietaryNeeds: '',
+        specialDietaryNeedsDesc: '',
         children: '',
         message: '',
       });
@@ -30,8 +30,6 @@ export function makeServer({ environment = 'test' } = {}) {
       // this.namespace = 'api';
 
       this.get('/record/:recordId', (schema, request) => {
-        console.log(request.params.recordId);
-        console.log(typeof request.params.recordId);
         const record = schema.findBy('record', { id: request.params.recordId });
 
         if (!record) {
@@ -42,6 +40,24 @@ export function makeServer({ environment = 'test' } = {}) {
         console.log('[mirage] found record', record);
 
         return record.attrs;
+      });
+
+      this.patch('/record/:recordId', (schema, request) => {
+        const record = schema.findBy('record', { id: request.params.recordId });
+
+        if (!record) {
+          console.log('[mirage] no record found', record);
+          return new Response(404, {}, { error: 'NOT_FOUND' });
+        }
+
+        const body = JSON.parse(request.requestBody);
+
+        console.log('[mirage] sent body', body);
+
+        return {
+          ...record.attrs,
+          ...body,
+        };
       });
     },
   });

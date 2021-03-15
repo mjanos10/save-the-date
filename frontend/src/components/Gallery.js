@@ -6,7 +6,6 @@ export default function Gallery() {
   const images = [
     'DSC00743',
     'DSC00838',
-    // 'DSC00680',
     'DSC00927',
     'DSC01453',
     'DSC01489',
@@ -17,8 +16,16 @@ export default function Gallery() {
     full: `${process.env.PUBLIC_URL}/img/${name}--thumb.jpg`,
   }));
 
+  const options = {
+    buttons: {
+      showAutoplayButton: false,
+      showDownloadButton: false,
+      showThumbnailsButton: false,
+    },
+  };
+
   return (
-    <SRLWrapper>
+    <SRLWrapper options={options}>
       <div className="gallery">
         {images.map((i) => (
           <div className="gallery__elem" key={i.name}>

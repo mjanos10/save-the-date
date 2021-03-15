@@ -7,6 +7,7 @@
   --font-color: rgb(var(--font-color-rgb));
   --secondary-color: #8d3850;
   --bg-color: #fafafa;
+  --error-color: #ff2c46;
 }
 
 * {

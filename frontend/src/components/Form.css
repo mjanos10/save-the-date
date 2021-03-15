@@ -27,6 +27,11 @@
   display: none;
 }
 
+.form__content--isSuccess {
+  text-align: center;
+  font-size: 2em;
+}
+
 .form__content--isSubmitting .form__loading {
   position: absolute;
   top: 0;
@@ -87,4 +92,14 @@
   color: var(--font-color);
   background-color: var(--bg-color);
   border: 1px solid;
+}
+
+.form__msg {
+  display: block;
+  margin-top: 0.3em;
+}
+
+.form__msg--error {
+  color: var(--error-color);
+  text-align: center;
 }

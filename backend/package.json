@@ -1,11 +1,12 @@
 {
-  "name": "src",
+  "name": "save-the-date-backend",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "dependencies": {
     "airtable": "^0.10.1",
     "express": "^4.17.1",
+    "joi": "^17.4.0",
     "lambda-log": "^2.4.0"
   },
   "devDependencies": {

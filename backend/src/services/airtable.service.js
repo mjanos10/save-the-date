@@ -1,3 +1,5 @@
+// @ts-check
+
 "use strict";
 
 const Airtable = require("airtable");
@@ -8,52 +10,25 @@ const client = new Airtable({
   endpointUrl: "https://api.airtable.com",
 }).base(process.env.AIRTABLE_BASE);
 
-async function getRecord(id) {
-  try {
-    logger.info("getting_record_with_id", { id });
-    const record = await client("DataTable").find(id);
-    logger.info("successfully_got_record_with_id", { id, record });
+/**
+ * @param {string} id
+ * @returns {Promise<import("../../../shared/types").AirtableRecord>}
+ */
+exports.getRecord = async function getRecord(id) {
+  logger.info("sending_airtable_get_record_query", { id });
+  const record = await client("DataTable").find(id);
+  logger.info("airtable_get_record_query_response", { id, record });
+  return record.fields;
+};
 
-    return { success: true, data: transformRecord(record) };
-  } catch (error) {
-    logger.error("failed_to_get_record_with_id", { id, error });
-    return { success: false, error };
-  }
-}
-
-function transformRecord(record) {
-  const people = [
-    record.fields["Név1"],
-    record.fields["Név2"],
-    record.fields["Név3"],
-    record.fields["Név4"],
-    record.fields["Név5"],
-  ].filter(Boolean);
-
-  return {
-    isComing: getIsComing(record),
-    people,
-    canBringPlusOne: people.length === 1,
-    askChildren: Boolean(record.fields["Gyerek kérdés"]),
-    multipleChildren: Boolean(record.fields["Több gyerekes"]),
-    children: record.fields["Gyerekek"],
-  };
-}
-
-function getIsComing(record) {
-  if (record.fields["Jön"] === "igen") {
-    return "yes";
-  }
-  if (record.fields["Jön"] === "nem") {
-    return "no";
-  }
-  if (record.fields["Jön"] === "nem tudja") {
-    return "unsure";
-  }
-  // Empty string for not set value
-  return "";
-}
-
-module.exports = {
-  getRecord,
+/**
+ * @param {string} id
+ * @param {import("../../../shared/types").UpdatableAirtableRecord} data
+ * @returns {Promise<import("../../../shared/types").AirtableRecord>}
+ */
+exports.updateRecord = async function updateRecord(id, data) {
+  logger.info("sending_airtable_update_record_request", { id, data });
+  const record = await client("DataTable").update(id, data);
+  logger.info("airtable_record_update_response_arrived", { id, data, record });
+  return record.fields;
 };

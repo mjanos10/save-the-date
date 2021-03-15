@@ -1,3 +1,5 @@
+// @ts-check
+
 import React, { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -14,6 +16,13 @@ import { saveData } from '../services/api';
 const getUnsetSelectLabel = (isPlural) => {
   return `-- Kérjük válassz${isPlural ? 'atok' : ''} --`;
 };
+
+const getIsComingOptions = (isPlural) => [
+  ['', getUnsetSelectLabel(isPlural)],
+  ['yes', 'Igen, mindenképp!'],
+  ['no', isPlural ? 'Nem fogunk tudni sajnos :(' : 'Nem fogok tudni sajnos :('],
+  ['not-sure', isPlural ? 'Még nem tudjuk' : 'Még nem tudom'],
+];
 
 const getPlusOneOptions = (isPlural) => [
   ['', getUnsetSelectLabel(isPlural)],
@@ -50,6 +59,43 @@ const getChildrenDescLabel = (isPlural, multipleChildren) => {
     return 'Hány éves gyerekeid vannak?';
   }
   return 'Hány éves gyereked van?';
+};
+
+/**
+ *
+ * @param {boolean} isPlural
+ * @param {import('../../../shared/types').FormYesNoUnsure} isComing
+ * @returns
+ */
+const getMessageLabel = (isPlural, isComing) => {
+  if (isComing === 'yes') {
+    return 'Bármi egyéb, ami nem fért máshova?';
+  }
+
+  let prefix = isComing === 'not-sure' ? 'Nem probléma.' : 'Nagyon sajnáljuk!';
+
+  return `${prefix} Ha szeretnétek üzenni valamit, itt megtehetitek.`;
+};
+
+/**
+ *
+ * @param {import('../../../shared/types').FormData} data
+ * @returns {import('../../../shared/types').FormData}
+ */
+const sanitizeData = (data) => {
+  if (data.isComing === 'yes') {
+    return data;
+  }
+  return {
+    isComing: data.isComing,
+    message: data.message,
+    specialDietaryNeedsDesc: '',
+    bringingChildren: 'no',
+    childrenDesc: '',
+    hasSpecialDietaryNeeds: 'no',
+    plusOne: 'no',
+    requiresAccommodation: 'no',
+  };
 };
 
 /**
@@ -122,10 +168,7 @@ export default function Form({ pageData }) {
       label: isPlural ? `Mire vagytok allergiásak?` : 'Mire vagy allergiás?',
     },
     message: {
-      label:
-        isComing === 'yes'
-          ? 'Bármilyen egyéb megjegyzés'
-          : 'Nagyon sajnáljuk! Ha szeretnétek üzenni valamit, itt megtehetitek.',
+      label: getMessageLabel(isPlural, isComing),
     },
   };
 
@@ -134,7 +177,7 @@ export default function Form({ pageData }) {
     setIsSubmitting(true);
 
     try {
-      const response = await saveData(pageData.id, data);
+      const response = await saveData(pageData.id, sanitizeData(data));
       if (!response.success) {
         setIsSuccess(false);
         setIsSubmitting(false);
@@ -178,11 +221,7 @@ export default function Form({ pageData }) {
               name="isComing"
               ref={register({ required: true })}
             >
-              {getYesNoOptions(
-                isPlural,
-                labels.isComing.yes,
-                labels.isComing.no
-              ).map(([key, label]) => (
+              {getIsComingOptions(isPlural).map(([key, label]) => (
                 <option key={key} value={key}>
                   {label}
                 </option>

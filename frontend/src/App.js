@@ -9,7 +9,8 @@ import Home from './views/Home';
 // import NotComing from './views/NotComing';
 import NotFound from './views/NotFound';
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.REACT_APP_USER_MOCK === 'true') {
+  console.log('using mock server');
   makeServer({ environment: 'development' });
 }
 

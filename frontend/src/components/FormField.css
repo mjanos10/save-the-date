@@ -9,5 +9,5 @@
 
 .form-field__error {
   margin-top: 0.5em;
-  color: #ff2c46;
+  color: var(--error-color);
 }
