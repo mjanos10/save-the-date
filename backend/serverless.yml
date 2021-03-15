@@ -7,6 +7,8 @@ provider:
   region: eu-central-1
   profile: mjanos10
   lambdaHashingVersion: "20201221"
+  httpApi:
+    cors: true
   iam:
     role:
       statements:
