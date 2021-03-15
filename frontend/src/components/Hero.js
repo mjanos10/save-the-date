@@ -5,7 +5,7 @@ export default function Hero() {
   return (
     <div className="hero">
       <div className="hero__img">
-        <img src={img} alt="" />
+        <img src={img} alt="" width="900" height="450" />
       </div>
     </div>
   );
