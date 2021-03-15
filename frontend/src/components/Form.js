@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
+
 import './Form.css';
 
 import FormField from './FormField';
+
+import { saveData } from '../services/api';
 
 /**
  * @param {boolean} isPlural
@@ -51,7 +54,7 @@ const getChildrenDescLabel = (isPlural, multipleChildren) => {
 
 /**
  * @param {Object} props
- * @param {import('../types').PageData} props.pageData
+ * @param {import('../../../shared/types').PageData} props.pageData
  */
 export default function Form({ pageData }) {
   const {
@@ -63,24 +66,28 @@ export default function Form({ pageData }) {
 
   const isPlural = peopleCount > 1;
 
-  const { register, handleSubmit, errors, watch } = useForm({
+  const formRef = useRef(null);
+
+  const { register, handleSubmit, errors, watch, reset } = useForm({
     defaultValues: {
       isComing: pageData.isComing,
       message: pageData.message,
       plusOne: pageData.plusOne,
       requiresAccommodation: pageData.requiresAccommodation,
-      hasAllergy: pageData.hasAllergy,
-      allergyDesc: pageData.allergyDesc,
+      hasSpecialDietaryNeeds: pageData.hasSpecialDietaryNeeds,
+      specialDietaryNeedsDesc: pageData.specialDietaryNeedsDesc,
       bringingChildren: pageData.bringingChildren,
       childrenDesc: pageData.childrenDesc,
     },
   });
 
-  const { isComing, hasAllergy, bringingChildren } = watch();
+  const { isComing, hasSpecialDietaryNeeds, bringingChildren } = watch();
 
-  console.log('rerender', isComing, hasAllergy);
+  console.log('rerender', isComing, hasSpecialDietaryNeeds);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const labels = {
     isComing: {
@@ -104,27 +111,43 @@ export default function Form({ pageData }) {
     childrenDesc: {
       label: getChildrenDescLabel(isPlural, multipleChildren),
     },
-    hasAllergy: {
+    hasSpecialDietaryNeeds: {
       label: isPlural
         ? 'Van valamelyikőtöknek étel allergiája?'
         : 'Van étel allergiád?',
       yes: 'Van',
       no: 'Nincs',
     },
-    allergyDesc: {
+    specialDietaryNeedsDesc: {
       label: isPlural ? `Mire vagytok allergiásak?` : 'Mire vagy allergiás?',
     },
     message: {
-      label: 'Bármilyen egyéb megjegyzés',
+      label:
+        isComing === 'yes'
+          ? 'Bármilyen egyéb megjegyzés'
+          : 'Nagyon sajnáljuk! Ha szeretnétek üzenni valamit, itt megtehetitek.',
     },
   };
 
-  async function onSubmit(e) {
-    console.log(e);
+  async function onSubmit(data) {
+    console.log(data);
     setIsSubmitting(true);
 
     try {
-      console.log('Submitted');
+      const response = await saveData(pageData.id, data);
+      if (!response.success) {
+        setIsSuccess(false);
+        setIsSubmitting(false);
+        setSubmitError(
+          'Hiba történt a beküldés során. Légyszi nézdd át, hogy mindent jól küldtél-e be.'
+        );
+        return;
+      }
+      console.log('Submitted', response);
+      setIsSuccess(true);
+      reset();
+
+      formRef.current.scrollIntoView();
     } catch (error) {
       console.error('Error while submitting', error);
     }
@@ -135,59 +158,30 @@ export default function Form({ pageData }) {
   let formContentClasses = 'form__content';
   if (isSubmitting) {
     formContentClasses += ' form__content--isSubmitting';
+  } else if (isSuccess) {
+    formContentClasses += ' form__content--isSuccess';
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="form">
-      <div className={formContentClasses}>
-        <FormField fieldId="is-coming" label={labels.isComing.label}>
-          <select
-            id="is-coming"
-            name="isComing"
-            ref={register({ required: true })}
-          >
-            {getYesNoOptions(
-              isPlural,
-              labels.isComing.yes,
-              labels.isComing.no
-            ).map(([key, label]) => (
-              <option key={key} value={key}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </FormField>
-
-        {canBringPlusOne && isComing === 'yes' && (
-          <FormField fieldId="plus-one" label={labels.plusOne.label}>
-            <select
-              id="plus-one"
-              name="plusOne"
-              ref={register({ required: true })}
-            >
-              {getPlusOneOptions(isPlural).map(([key, label]) => (
-                <option key={label} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </FormField>
-        )}
-
-        {isComing === 'yes' && (
+    <form onSubmit={handleSubmit(onSubmit)} className="form" ref={formRef}>
+      {isSuccess ? (
+        <div className={formContentClasses}>Köszönjük szépen!</div>
+      ) : (
+        <div className={formContentClasses}>
           <FormField
-            fieldId="requires-accommodation"
-            label={labels.requiresAccommodation.label}
+            fieldId="is-coming"
+            label={labels.isComing.label}
+            error={errors.isComing}
           >
             <select
-              id="requires-accommodation"
-              name="requiresAccommodation"
+              id="is-coming"
+              name="isComing"
               ref={register({ required: true })}
             >
               {getYesNoOptions(
                 isPlural,
-                labels.requiresAccommodation.yes,
-                labels.requiresAccommodation.no
+                labels.isComing.yes,
+                labels.isComing.no
               ).map(([key, label]) => (
                 <option key={key} value={key}>
                   {label}
@@ -195,99 +189,149 @@ export default function Form({ pageData }) {
               ))}
             </select>
           </FormField>
-        )}
 
-        {askChildren && isComing === 'yes' && (
-          <FormField
-            fieldId="bringing-children"
-            label={labels.bringingChildren.label}
-          >
-            <select
-              id="bringing-children"
-              name="bringingChildren"
-              ref={register({ required: true })}
+          {canBringPlusOne && isComing === 'yes' && (
+            <FormField
+              fieldId="plus-one"
+              label={labels.plusOne.label}
+              error={errors.plusOne}
             >
-              {getYesNoOptions(
-                isPlural,
-                labels.bringingChildren.yes,
-                labels.bringingChildren.no
-              ).map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </FormField>
-        )}
+              <select
+                id="plus-one"
+                name="plusOne"
+                ref={register({ required: true })}
+              >
+                {getPlusOneOptions(isPlural).map(([key, label]) => (
+                  <option key={label} value={key}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </FormField>
+          )}
 
-        {askChildren && isComing === 'yes' && bringingChildren === 'yes' && (
-          <FormField
-            fieldId="children-description"
-            label={labels.childrenDesc.label}
-          >
-            <textarea
-              id="children-description"
-              name="childrenDesc"
-              ref={register({ required: true })}
-            />
-          </FormField>
-        )}
-
-        {isComing === 'yes' && (
-          <FormField fieldId="has-allergy" label={labels.hasAllergy.label}>
-            <select
-              id="has-allergy"
-              name="hasAllergy"
-              ref={register({ required: true })}
+          {isComing === 'yes' && (
+            <FormField
+              fieldId="requires-accommodation"
+              label={labels.requiresAccommodation.label}
+              error={errors.requiresAccommodation}
             >
-              {getYesNoOptions(
-                isPlural,
-                labels.hasAllergy.yes,
-                labels.hasAllergy.no
-              ).map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </FormField>
-        )}
+              <select
+                id="requires-accommodation"
+                name="requiresAccommodation"
+                ref={register({ required: true })}
+              >
+                {getYesNoOptions(
+                  isPlural,
+                  labels.requiresAccommodation.yes,
+                  labels.requiresAccommodation.no
+                ).map(([key, label]) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </FormField>
+          )}
 
-        {isComing === 'yes' && hasAllergy === 'yes' && (
-          <FormField
-            fieldId="allergy-description"
-            label={labels.allergyDesc.label}
-          >
-            <textarea
-              id="allergy-description"
-              name="allergyDesc"
-              ref={register({ required: true })}
-            />
-          </FormField>
-        )}
+          {askChildren && isComing === 'yes' && (
+            <FormField
+              fieldId="bringing-children"
+              label={labels.bringingChildren.label}
+              error={errors.bringingChildren}
+            >
+              <select
+                id="bringing-children"
+                name="bringingChildren"
+                ref={register({ required: true })}
+              >
+                {getYesNoOptions(
+                  isPlural,
+                  labels.bringingChildren.yes,
+                  labels.bringingChildren.no
+                ).map(([key, label]) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </FormField>
+          )}
 
-        {isComing !== '' && (
-          <FormField
-            fieldId="message"
-            label={labels.message.label}
-            error={errors.message}
-          >
-            <textarea
-              id="message"
-              name="message"
-              ref={register({ required: true })}
-            />
-          </FormField>
-        )}
-        <div className="formField">
-          <button className="btn btn--primary" type="submit">
-            Küldés
-          </button>
+          {askChildren && isComing === 'yes' && bringingChildren === 'yes' && (
+            <FormField
+              fieldId="children-description"
+              label={labels.childrenDesc.label}
+              error={errors.childrenDesc}
+            >
+              <textarea
+                id="children-description"
+                name="childrenDesc"
+                ref={register({ required: true })}
+              />
+            </FormField>
+          )}
+
+          {isComing === 'yes' && (
+            <FormField
+              fieldId="has-special-dietary-needs"
+              label={labels.hasSpecialDietaryNeeds.label}
+              error={errors.hasSpecialDietaryNeeds}
+            >
+              <select
+                id="has-special-dietary-needs"
+                name="hasSpecialDietaryNeeds"
+                ref={register({ required: true })}
+              >
+                {getYesNoOptions(
+                  isPlural,
+                  labels.hasSpecialDietaryNeeds.yes,
+                  labels.hasSpecialDietaryNeeds.no
+                ).map(([key, label]) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </FormField>
+          )}
+
+          {isComing === 'yes' && hasSpecialDietaryNeeds === 'yes' && (
+            <FormField
+              fieldId="special-dietary-needs-description"
+              label={labels.specialDietaryNeedsDesc.label}
+              error={errors.specialDietaryNeedsDesc}
+            >
+              <textarea
+                id="special-dietary-needs-description"
+                name="specialDietaryNeedsDesc"
+                ref={register({ required: true })}
+              />
+            </FormField>
+          )}
+
+          {isComing !== '' && (
+            <FormField
+              fieldId="message"
+              label={labels.message.label}
+              error={errors.message}
+            >
+              <textarea id="message" name="message" ref={register} />
+            </FormField>
+          )}
+          <div className="formField">
+            <button className="btn btn--primary" type="submit">
+              Küldés
+            </button>
+          </div>
+          {submitError && (
+            <div className="form__msg form__msg--error">{submitError}</div>
+          )}
+          <div className="form__loading" onClick={() => setIsSubmitting(false)}>
+            Egy pillanat...
+          </div>
         </div>
-        <div className="form__loading" onClick={() => setIsSubmitting(false)}>
-          Egy pillanat...
-        </div>
-      </div>
+      )}
     </form>
   );
 }
