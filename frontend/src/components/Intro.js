@@ -14,7 +14,7 @@ export default function Intro({ people, peopleCount }) {
 
   const text1 = `Szeretettel meghívunk ${
     isPlural ? 'Titeket' : 'Téged'
-  } a 2021. 09. 03-án tartandó esküvőnkre a lajosmizsei Ezüst Villa Rendezvényházba!`;
+  } a 2021. 09. 03-án tartandó esküvőnkre, a lajosmizsei Ezüst Villa Rendezvényházba!`;
   const text2 = `Hogy a jelenleginél kicsit felkészültebbek lehessünk, kérünk ${
     isPlural ? 'válaszoljatok' : 'válaszolj'
   } nekünk az alábbi kérdésekre, ezzel is növelve az esélyét, hogy vacsorához ${

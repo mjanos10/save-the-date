@@ -20,7 +20,7 @@ const getUnsetSelectLabel = (isPlural) => {
 const getIsComingOptions = (isPlural) => [
   ['', getUnsetSelectLabel(isPlural)],
   ['yes', 'Igen, mindenképp!'],
-  ['no', isPlural ? 'Nem fogunk tudni sajnos :(' : 'Nem fogok tudni sajnos :('],
+  ['no', isPlural ? 'Sajnos nem tudunk menni(' : 'Sajnos nem tudok menni :('],
   ['not-sure', isPlural ? 'Még nem tudjuk' : 'Még nem tudom'],
 ];
 
@@ -50,7 +50,7 @@ const getBringingChildrenLabel = (isPlural, multipleChildren) => {
 
 const getChildrenDescLabel = (isPlural, multipleChildren) => {
   if (isPlural && multipleChildren) {
-    return 'Hány évesek gyerekeitek vannak?';
+    return 'Hány éves gyerekeitek vannak?';
   }
   if (isPlural && !multipleChildren) {
     return 'Hány éves gyereketek van?';
@@ -68,13 +68,13 @@ const getChildrenDescLabel = (isPlural, multipleChildren) => {
  * @returns
  */
 const getMessageLabel = (isPlural, isComing) => {
-  if (isComing === 'yes') {
-    return 'Bármi egyéb, ami nem fért máshova?';
-  }
+  // if (isComing === 'yes') {
+  return 'Üzennél még valamit?';
+  // }
 
-  let prefix = isComing === 'not-sure' ? 'Nem probléma.' : 'Nagyon sajnáljuk!';
-
-  return `${prefix} Ha szeretnétek üzenni valamit, itt megtehetitek.`;
+  // return `Ha ${isPlural ? 'szeretnétek' : 'szeretnél'} üzenni valamit, itt ${
+  //   isPlural ? 'megtehetitek' : 'megteheted'
+  // }.`;
 };
 
 /**
@@ -137,15 +137,17 @@ export default function Form({ pageData }) {
 
   const labels = {
     isComing: {
-      label: `${isPlural ? 'Tudtok' : 'Tudsz'} jönni az esküvőre?`,
-      yes: `Igen, ${isPlural ? 'tudunk' : 'tudok'} jönni!`,
-      no: `Sajnos nem ${isPlural ? 'tudunk' : 'tudok'} jönni :(`,
+      label: `Számíthatunk a ${
+        isPlural ? 'részvételetekre' : 'részvételedre'
+      }?`,
     },
     plusOne: {
       label: `${isPlural ? `Szeretnétek` : 'Szeretnél'} hozni +1 főt?`,
     },
     requiresAccommodation: {
-      label: isPlural ? 'Igényeltek szállást?' : 'Igényelsz szállást?',
+      label: isPlural
+        ? 'Szükségetek lesz szállásra?'
+        : 'Szükséged lesz szállásra?',
       yes: 'Igen',
       no: 'Nem',
     },
@@ -159,13 +161,13 @@ export default function Form({ pageData }) {
     },
     hasSpecialDietaryNeeds: {
       label: isPlural
-        ? 'Van valamelyikőtöknek étel allergiája?'
-        : 'Van étel allergiád?',
-      yes: 'Van',
-      no: 'Nincs',
+        ? 'Követtek valamilyen speciális étrendet?'
+        : 'Követsz valamilyen speciális étrendet?',
+      yes: 'Igen',
+      no: 'Nem',
     },
     specialDietaryNeedsDesc: {
-      label: isPlural ? `Mire vagytok allergiásak?` : 'Mire vagy allergiás?',
+      label: 'Mire figyeljünk az étrenddel kapcsolatban?',
     },
     message: {
       label: getMessageLabel(isPlural, isComing),
@@ -348,6 +350,16 @@ export default function Form({ pageData }) {
               />
             </FormField>
           )}
+
+          {isComing === 'not-sure' && (
+            <p>
+              Nem probléma, viszont kérjük, hogy{' '}
+              {isPlural ? 'jelezzetek ' : 'jelezz '}
+              vissza június elejéig!
+            </p>
+          )}
+
+          {isComing === 'no' && <p>Nagyon sajnáljuk!</p>}
 
           {isComing !== '' && (
             <FormField

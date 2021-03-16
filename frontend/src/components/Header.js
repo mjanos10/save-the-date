@@ -9,7 +9,7 @@ export default function Header() {
         <img src={img} alt="" />
       </div>
       <h1 className="header__title">Evelin & János</h1>
-      <p className="header__details">2021. 09. 03</p>
+      <p className="header__details">2021. 09. 03.</p>
       <p>Lajosmizse, Ezüst Villa Rendezvényház</p>
     </header>
   );

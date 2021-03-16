@@ -11,6 +11,10 @@
   --big-padding: 30px;
 }
 
+.info small {
+  display: block;
+}
+
 
 
 .info__panel--left {
@@ -33,9 +37,9 @@
   }
 
   .info__panel {
-    display: flex;
+    /* display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center; */
     border-bottom: none;
     width: 315px;
   }
