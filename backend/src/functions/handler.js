@@ -82,7 +82,7 @@ exports.updateOneRecord = async (evt, ctx) => {
       updatedSharedRecord,
     });
 
-    await notification.emitEvent(recordId, foundRecord["Ismertető"]);
+    await notification.emitEvent(recordId, updatedRecord);
 
     return successResponse(sharedRecord, awsRequestId);
   } catch (error) {
