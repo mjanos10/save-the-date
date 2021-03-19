@@ -23,7 +23,7 @@ export default function Intro({ people, peopleCount }) {
   return (
     <div className="intro">
       <div className="intro__text">
-        <h2>Kedves {renderNames()}</h2>
+        <h2>Kedves {renderNames()}!</h2>
         <p>{text1}</p>
         <p>{text2}</p>
         <p>U.i.: Már a meghívó is úton van!</p>
