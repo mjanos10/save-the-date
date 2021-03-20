@@ -26,7 +26,7 @@ exports.airtableToSharedRecord = (airtableRecord) => {
     childrenDesc: airtableRecord["Gyerek leírás"],
     hasSpecialDietaryNeeds: toYesNo(airtableRecord["Kér spec. ételt?"]),
     message: airtableRecord["Üzenet"],
-    plusOne: toYesNo(airtableRecord["Hoz +1-et?"]),
+    plusOne: toYesNoUnsure(airtableRecord["Hoz +1-et?"]),
     requiresAccommodation: toYesNo(airtableRecord["Kér spec. ételt?"]),
     specialDietaryNeedsDesc: airtableRecord["Spec. étel kívánság"],
   };
@@ -39,7 +39,7 @@ exports.airtableToSharedRecord = (airtableRecord) => {
 exports.sharedToUpdatableAirtableRecord = (sharedRecord) => {
   return {
     Jön: fromYesNoUnsure(sharedRecord.isComing),
-    "Hoz +1-et?": fromYesNo(sharedRecord.plusOne),
+    "Hoz +1-et?": fromYesNoUnsure(sharedRecord.plusOne),
     "Hoz gyereket?": fromYesNo(sharedRecord.bringingChildren),
     "Gyerek leírás": sharedRecord.childrenDesc,
     "Kér szállást?": fromYesNo(sharedRecord.requiresAccommodation),

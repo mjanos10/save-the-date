@@ -20,7 +20,7 @@ export interface UpdatableAirtableRecord {
   "Hoz gyereket?": AirtableYesNo;
   "Gyerek leírás"?: string;
   "Kér szállást?": AirtableYesNo;
-  "Hoz +1-et?": AirtableYesNo;
+  "Hoz +1-et?": AirtableYesNoUnsure;
   "Kér spec. ételt?": AirtableYesNo;
   "Spec. étel kívánság"?: string;
   Üzenet?: string;
@@ -48,7 +48,7 @@ export interface Settings {
 
 export interface FormData {
   isComing: FormYesNoUnsure;
-  plusOne?: FormYesNo;
+  plusOne?: FormYesNoUnsure;
   requiresAccommodation?: FormYesNo;
   hasSpecialDietaryNeeds?: FormYesNo;
   specialDietaryNeedsDesc?: string;
