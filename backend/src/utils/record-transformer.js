@@ -27,7 +27,7 @@ exports.airtableToSharedRecord = (airtableRecord) => {
     hasSpecialDietaryNeeds: toYesNo(airtableRecord["Kér spec. ételt?"]),
     message: airtableRecord["Üzenet"],
     plusOne: toYesNoUnsure(airtableRecord["Hoz +1-et?"]),
-    requiresAccommodation: toYesNo(airtableRecord["Kér spec. ételt?"]),
+    requiresAccommodation: toYesNo(airtableRecord["Kér szállást?"]),
     specialDietaryNeedsDesc: airtableRecord["Spec. étel kívánság"],
   };
 };
