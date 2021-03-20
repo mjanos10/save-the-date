@@ -12,31 +12,8 @@ const {
   airtableToSharedRecord,
   sharedToUpdatableAirtableRecord,
 } = require("../utils/record-transformer");
+const { successResponse, errorResponse } = require("../utils/http-response");
 const { validateUpdateBody } = require("../validators/update-validator");
-
-exports.getOneRecord = async (evt, ctx) => {
-  const { awsRequestId } = ctx;
-  const { recordId } = evt.pathParameters;
-
-  try {
-    logger.info("new_event", {
-      evt,
-      awsRequestId,
-      recordId: evt.pathParameters.recordId,
-    });
-
-    const airtableRecord = await airtable.getRecord(recordId);
-    const sharedRecord = airtableToSharedRecord(airtableRecord);
-    logger.info("successfully_transformed_record", { recordId, sharedRecord });
-    return successResponse(sharedRecord, awsRequestId);
-  } catch (error) {
-    logger.error("failed_to_get_one_record", error);
-    if (error && error.error === "NOT_FOUND") {
-      return errorResponse(404, "Not Found", error, awsRequestId);
-    }
-    return errorResponse(500, "Unknown error", error, awsRequestId);
-  }
-};
 
 exports.updateOneRecord = async (evt, ctx) => {
   const { awsRequestId } = ctx;
@@ -96,26 +73,3 @@ exports.updateOneRecord = async (evt, ctx) => {
     return errorResponse(500, "Unknown error", error, awsRequestId);
   }
 };
-
-function successResponse(body, messageId) {
-  return {
-    statusCode: 200,
-    body: JSON.stringify(body),
-    headers: {
-      "Content-type": "application/json",
-      "x-message-id": messageId,
-    },
-  };
-}
-
-function errorResponse(status, message, body, messageId) {
-  return {
-    statusCode: status,
-    message,
-    headers: {
-      "Content-type": "application/json",
-      "x-message-id": messageId,
-    },
-    body: JSON.stringify(body),
-  };
-}

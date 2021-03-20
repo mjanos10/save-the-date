@@ -36,6 +36,9 @@ export interface AirtableRecord extends UpdatableAirtableRecord {
   Név5: string;
   Gyerekes: boolean;
   "Több gyerekes": boolean;
+  "Csak x-en jönnek"?: number;
+  "5 év alatti gyerekek száma"?: number;
+  "5-12 közti gyerekek száma"?: number;
 }
 
 export interface Settings {
