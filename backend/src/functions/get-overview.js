@@ -101,7 +101,7 @@ function getAllChildrenCount(records) {
 function getChildrenCount(records) {
   return records
     .filter(isComing)
-    .reduce((sum, r) => r["5-12 közti gyerekek száma"] || 0 + sum, 0);
+    .reduce((sum, r) => sum + (r["5-12 közti gyerekek száma"] || 0), 0);
 }
 
 /**
@@ -111,5 +111,5 @@ function getChildrenCount(records) {
 function getBabyCount(records) {
   return records
     .filter(isComing)
-    .reduce((sum, r) => r["5 év alatti gyerekek száma"] || 0 + sum, 0);
+    .reduce((sum, r) => sum + (r["5 év alatti gyerekek száma"] || 0), 0);
 }

@@ -5,7 +5,9 @@ function successResponse(body, messageId, useJson = true) {
     statusCode: 200,
     body: useJson ? JSON.stringify(body) : body,
     headers: {
-      "Content-type": useJson ? "application/json" : "text/plain",
+      "Content-type": useJson
+        ? "application/json"
+        : "text/plain; charset=UTF-8",
       "x-message-id": messageId,
     },
   };
