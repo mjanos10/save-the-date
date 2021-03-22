@@ -69,7 +69,7 @@ const getChildrenDescLabel = (isPlural, multipleChildren) => {
  */
 const getMessageLabel = (isPlural, isComing) => {
   // if (isComing === 'yes') {
-  return 'Üzennél még valamit?';
+  return isPlural ? 'Üzennétek még valamit?' : 'Üzennél még valamit?';
   // }
 
   // return `Ha ${isPlural ? 'szeretnétek' : 'szeretnél'} üzenni valamit, itt ${
