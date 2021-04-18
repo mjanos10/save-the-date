@@ -31,6 +31,7 @@ function createOverview(records) {
   return `Összefoglaló
 ----------------------------
 Várható vendégek száma: ${getComingCount(records)}
+Szállást kértek: ${getStayRequestCount(records)}
 Plusz +1-ek száma: ${getPlusOneCount(records)}
 Összes gyerekek szám: ${getAllChildrenCount(records)}
 Gyerekek 0 és 5 év között: ${getBabyCount(records)}
@@ -47,6 +48,23 @@ function getComingCount(records) {
     (sum, record) => getComingCountForOneRecord(record) + sum,
     0
   );
+}
+
+/**
+ * @param {import('../../../shared/types').AirtableRecord[]} records
+ * @returns {number}
+ */
+function getStayRequestCount(records) {
+  return records.reduce((sum, record) => {
+    const comingCount = getComingCountForOneRecord(record);
+    if (!comingCount) {
+      return sum;
+    }
+    if (record["Kér szállást?"] === "igen") {
+      return sum + comingCount;
+    }
+    return sum;
+  }, 0);
 }
 
 /**
